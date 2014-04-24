@@ -23,25 +23,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class handles all events related to Customer.
+ * When a customer registers or updates his profile, the Customer info will be sent to Emerge via restClient.
+ */
 //@Component("customerEvent")
 public class CustomerEvent extends BaseEvent{
 
     private Logger logger = Logger.getLogger(CustomerEvent.class);
-
+    private JsonBuilder jsonBuilder;
+    private EmergeRestClient emergeRestClient;
+    private CustomerDTOBuilder customerDTOBuilder;
+    private CustomerDTOBuildHelper customerDTOBuildHelper;
     /**
-     *
+     *   Constructor
      */
-    public CustomerEvent() {
+    public CustomerEvent(JsonBuilder jsonBuilder, EmergeRestClient emergeRestClient) {
         super();
+        this.jsonBuilder = jsonBuilder;
+        this.emergeRestClient = emergeRestClient;
         logger.info("Customer Event Created...");
     }
 
     //@Autowired
-    private JsonBuilder jsonBuilder;
 
-    public void setJsonBuilder(JsonBuilder jsonBuilder) {
-        this.jsonBuilder = jsonBuilder;
-    }
 
     //@After(" execution(* org.broadleafcommerce.core.web.controller.checkout.)")
     public void registerUser(JoinPoint joinPoint){
@@ -53,22 +58,24 @@ public class CustomerEvent extends BaseEvent{
 
         RegisterCustomerForm customerForm = (RegisterCustomerForm) args[3];
         CustomerDTO customerDto = createCustomerDTO(customerForm);
+        List<CustomerDTO> customerDTOs = new ArrayList<CustomerDTO>();
+        customerDTOs.add(customerDto);
         logger.info("Order confirmation success");
-        String customerJson  = jsonBuilder.toJson(customerDto);
+        String customerJson  = jsonBuilder.toJson(customerDTOs);
         try {
             cutomersJsonArray = new JSONArray(customerJson);
         } catch (JSONException e) {
-            logger.error("Error in tranforming customer object to JSON, can't send this notification to eMerge");
+            logger.error("Error in transforming customer object to JSON, can't send this notification to eMerge");
             e.printStackTrace();
         }
-        callEmerge(cutomersJsonArray.toString());
+        emergeRestClient.invoke(Operation.CUSTOMER_CREATE, customerJson);
     }
 
     /**
      * Collects the update user data [email, firstName, lastName] and send it to eMerge
      * @param joinPoint
      */
-    public void updateUserAcccount(JoinPoint joinPoint){
+    public void updateUserAccount(JoinPoint joinPoint){
         logger.info("Update User Account Success");
         Object[] args = joinPoint.getArgs();
         HttpServletRequest request = (HttpServletRequest) args[0];
@@ -77,39 +84,30 @@ public class CustomerEvent extends BaseEvent{
         JSONArray cutomersJsonArray = null;
         UpdateAccountForm updateAccountForm = (UpdateAccountForm) args[2];
         CustomerDTO customerDto = createCustomerDTO(updateAccountForm);
-        String customerJson  = jsonBuilder.toJson(customerDto);
+        List<CustomerDTO> customerDTOs = new ArrayList<CustomerDTO>();
+        customerDTOs.add(customerDto);
+        String customerJson  = jsonBuilder.toJson(customerDTOs);
         try {
             cutomersJsonArray = new JSONArray(customerJson);
         } catch (JSONException e) {
-            logger.error("Error in tranforming customer object to JSON, can't send this notification to eMerge");
+            logger.error("Error in transforming customer object to JSON, can't send this notification to eMerge");
             e.printStackTrace();
         }
-        callEmerge(cutomersJsonArray.toString());
+        emergeRestClient.invoke(Operation.CUSTOMER_CREATE, customerJson);
     }
 
-
-
-
-
-
     private CustomerDTO createCustomerDTO(RegisterCustomerForm customerForm) {
-        CustomerDTOBuilder cuDtoBuilder = applicationContext.getBean(CustomerDTOBuilder.class);
-        CustomerDTOBuildHelper cuDtoBuildHelper = applicationContext.getBean(CustomerDTOBuildHelper.class);
-        return cuDtoBuildHelper.createCustomerDTO(customerForm, cuDtoBuilder);
+        return customerDTOBuildHelper.createCustomerDTO(customerForm, customerDTOBuilder);
     }
 
     private CustomerDTO createCustomerDTO(UpdateAccountForm updateAccountForm) {
-        CustomerDTOBuilder cuDtoBuilder = applicationContext.getBean(CustomerDTOBuilder.class);
-        CustomerDTOBuildHelper cuDtoBuildHelper = applicationContext.getBean(CustomerDTOBuildHelper.class);
-        return cuDtoBuildHelper.createCustomerDTO(updateAccountForm, cuDtoBuilder);
+        return customerDTOBuildHelper.createCustomerDTO(updateAccountForm, customerDTOBuilder);
     }
 
-    private void callEmerge(String customerJson){
-        //new EmergeRestClient().invoke(  , "");
-        new EmergeRestClient().invoke(Operation.CUSTOMER_CREATE, customerJson);
-
-    }
-
+    /**
+     * For Testing .
+     * @param args
+     */
     public static void main(String[] args){
         EmergeRestClient client = new EmergeRestClient();
         CustomerDTO customerDTO = new CustomerDTO();
@@ -128,9 +126,14 @@ public class CustomerEvent extends BaseEvent{
 
     private static String removeQuotesFirstAndLast(String customerJson) {
         customerJson = customerJson.replaceFirst("\"","").replace("}\"", "}").replace("\\","");
-        //customerJson = customerJson.replace("}\"", "}");
-
         return customerJson;
     }
 
+    public void setCustomerDTOBuilder(CustomerDTOBuilder customerDTOBuilder) {
+        this.customerDTOBuilder = customerDTOBuilder;
+    }
+
+    public void setCustomerDTOBuildHelper(CustomerDTOBuildHelper customerDTOBuildHelper) {
+        this.customerDTOBuildHelper = customerDTOBuildHelper;
+    }
 }

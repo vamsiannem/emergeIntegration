@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-3.2.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+	<!-- This will send notifications to eMerge project about the customer [Create 
+		Customer Profile, Edit profile, Make purchase, Search items...] -->
+	<context:annotation-config></context:annotation-config>
+	<context:component-scan base-package="com.lister.emerge"></context:component-scan>
+	
+	<aop:config>
+		<aop:aspect id="orderConfirmation" ref="orderConfirmationNotifier">
+			<aop:pointcut id="orderConfirmPointcut"
+				expression="execution(* org.broadleafcommerce.core.web.controller.checkout.BroadleafOrderConfirmationController.displayOrderConfirmationByOrderNumber(..))" />
+			<aop:after-returning method="logOrderSuccess"
+				pointcut-ref="orderConfirmPointcut" />
+		</aop:aspect>
+		
+		<!-- <aop:aspect id="userRegistration" ref="customerEvent">
+			<aop:pointcut id="processRegisterPointCut"  
+				expression="execution(* org.broadleafcommerce.profile.*.CustomerService.registerCustomer(..)) "/>			
+			<aop:after-returning method="registerUser"  				
+				pointcut-ref="blCustomerServiceOperation1" />
+			this point cut is defined in broadleaf, we should use the same in order to chain the advisors on 
+			the method call
+		</aop:aspect> -->
+		
+	</aop:config>
+	
+	<aop:config>
+        <!-- Add/Create User -->
+		<aop:aspect id="userRegistration" ref="customerEvent">
+			<aop:pointcut id="processRegisterPointCut"  
+				expression="execution(* com.lister.controller.account.RegisterController.processRegister(..)) "/>
+			<aop:after-returning method="registerUser"  				
+				pointcut-ref="processRegisterPointCut" />			
+		</aop:aspect>
+		
+		<!-- Update email, first name, last name -->
+		<aop:aspect id="updateUserAccount" ref="customerEvent">
+			<aop:pointcut id="updateUserAccountPointCut"
+				expression="execution(* com.lister.controller.account.UpdateAccountController.processUpdateAccount(..)) "/>
+			<aop:after-returning method="updateUserAccount"
+				pointcut-ref="updateUserAccountPointCut" />
+		</aop:aspect>
+		
+		<!-- Cart related aspects -->
+		<aop:aspect id="addToCart" ref="cartEvent">
+			<aop:pointcut id="addToCartPointCut"  
+				expression="execution(* com.lister.controller.account.CartController.add*(..)) "/>
+			<aop:after-returning method="addToCart"  returning="returnValue"				
+				pointcut-ref="addToCartPointCut" />							
+		</aop:aspect>
+		<aop:aspect id="updateQuantity" ref="cartEvent">
+			<aop:pointcut id="updateQuantityPointCut"  
+				expression="execution(* com.lister.controller.account.CartController.updateQuantity(..)) "/>
+			<aop:after-returning method="updateQuantity" returning="returnValue" 				
+				pointcut-ref="updateQuantityPointCut" />							
+		</aop:aspect>
+		<aop:aspect id="remove" ref="cartEvent">
+			<aop:pointcut id="removePointCut"  
+				expression="execution(* com.lister.controller.account.CartController.remove(..)) "/>
+			<aop:after-returning method="remove"  returning="returnValue"				
+				pointcut-ref="removePointCut" />							
+		</aop:aspect>
+		
+		<!-- 
+		<aop:aspect id="addCustomerAddress" ref="customerEvent">
+			<aop:pointcut id="addCustomerAddressPointCut"  
+				expression="execution(* com.lister.controller.account.ManageCustomerAddressesController.addCustomerAddress(..)) "/>
+			<aop:after-returning method="addCustomerAddress"  				
+				pointcut-ref="addCustomerAddressPointCut" />							
+		</aop:aspect>
+		<aop:aspect id="updateCustomerAddress" ref="customerEvent">
+			<aop:pointcut id="updateCustomerAddressPointCut"  
+				expression="execution(* com.lister.controller.account.ManageCustomerAddressesController.updateCustomerAddress(..)) "/>
+			<aop:after-returning method="updateCustomerAddress"  				
+				pointcut-ref="updateCustomerAddressPointCut" />							
+		</aop:aspect>
+		
+		<aop:aspect id="removeCustomerAddress" ref="customerEvent">
+			<aop:pointcut id="removeCustomerAddressPointCut"  
+				expression="execution(* com.lister.controller.account.ManageCustomerAddressesController.removeCustomerAddress(..)) "/>
+			<aop:after-returning method="removeCustomerAddress"  				
+				pointcut-ref="removeCustomerAddressPointCut" />							
+		</aop:aspect> -->		
+	</aop:config>
+	
+
+	<bean id="orderConfirmationNotifier" class="com.lister.emerge.events.OrderSuccessEvent"></bean>
+	<bean id="customerEvent" class="com.lister.emerge.events.CustomerEvent">
+        <constructor-arg index="0" name="jsonBuilder">
+            <bean class="com.lister.emerge.dto.json.JsonBuilder"/>
+        </constructor-arg>
+        <constructor-arg index="1" name="emergeRestClient">
+            <ref bean="emergeRestClient"/>
+        </constructor-arg>
+	</bean>
+    <bean id="emergeRestClient" class="com.lister.emerge.rest.EmergeRestClient" />
+	<bean id="customerDTOBuilder" class="com.lister.emerge.dto.CustomerDTOBuilder" scope="prototype"></bean>
+	<bean id="customerDTOBuilderHelper" class="com.lister.emerge.dto.helper.CustomerDTOBuildHelper" scope="prototype"></bean>
+	<bean id="jsonArray" class="org.json.JSONArray" scope="prototype"></bean>
+	<bean id="jsonObject" class="org.json.JSONObject" scope="prototype"></bean>
+</beans>       
