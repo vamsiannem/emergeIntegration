@@ -10,7 +10,7 @@ import retrofit.http.EncodedQuery;
  * @author vamsikrishna
  *
  */
-public interface CustomerService {
+public interface CustomerService extends Service {
 
     @retrofit.http.POST("/customers")
     @retrofit.http.Headers({

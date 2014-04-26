@@ -1,5 +1,7 @@
-package com.lister.emerge.dto;
+package com.lister.emerge.dto.helper;
 
+
+import com.lister.emerge.dto.CustomerDTO;
 
 public class CustomerDTOBuilder extends AbstractBuilder<CustomerDTO> {
 	private Long memberId;

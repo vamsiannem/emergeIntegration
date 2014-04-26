@@ -105,7 +105,7 @@
         </constructor-arg>
 	</bean>
     <bean id="emergeRestClient" class="com.lister.emerge.rest.EmergeRestClient" />
-	<bean id="customerDTOBuilder" class="com.lister.emerge.dto.CustomerDTOBuilder" scope="prototype"></bean>
+	<bean id="customerDTOBuilder" class="com.lister.emerge.dto.helper.CustomerDTOBuilder" scope="prototype"></bean>
 	<bean id="customerDTOBuilderHelper" class="com.lister.emerge.dto.helper.CustomerDTOBuildHelper" scope="prototype"></bean>
 	<bean id="jsonArray" class="org.json.JSONArray" scope="prototype"></bean>
 	<bean id="jsonObject" class="org.json.JSONObject" scope="prototype"></bean>

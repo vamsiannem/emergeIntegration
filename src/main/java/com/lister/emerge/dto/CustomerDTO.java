@@ -10,7 +10,7 @@ import com.lister.emerge.dto.helper.Json;
  * Customer related details.
  *
  */
-public class CustomerDTO implements Serializable{
+public class CustomerDTO extends BaseDTO{
 
 	/**
 	 * 

@@ -8,9 +8,7 @@ import org.broadleafcommerce.profile.core.domain.CustomerPhone;
 import org.broadleafcommerce.profile.web.core.form.RegisterCustomerForm;
 
 import com.lister.emerge.dto.CustomerDTO;
-import com.lister.emerge.dto.CustomerDTOBuilder;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
