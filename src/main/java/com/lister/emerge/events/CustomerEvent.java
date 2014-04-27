@@ -32,6 +32,7 @@ public class CustomerEvent extends BaseEvent {
     private Logger logger = Logger.getLogger(CustomerEvent.class);
     private JsonBuilder jsonBuilder;
     private EmergeRestClient emergeRestClient;
+
     private CustomerDTOBuilder customerDTOBuilder;
     private CustomerDTOBuildHelper customerDTOBuildHelper;
 

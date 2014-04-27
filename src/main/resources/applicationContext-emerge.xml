@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-3.2.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+
+    <bean id="customerEvent" class="com.lister.emerge.events.CustomerEvent">
+        <constructor-arg index="0" name="jsonBuilder">
+            <bean class="com.lister.emerge.dto.json.JsonBuilder"/>
+        </constructor-arg>
+        <constructor-arg index="1" name="emergeRestClient">
+            <ref bean="emergeRestClient"/>
+        </constructor-arg>
+        <property name="customerDTOBuilder" ref="customerDTOBuilder"/>
+        <property name="customerDTOBuilderHelper" ref="customerDTOBuilderHelper"/>
+    </bean>
+    <bean id="cartEvent" class="com.lister.emerge.events.CartEvent">
+        <constructor-arg index="0" name="jsonBuilder">
+            <bean class="com.lister.emerge.dto.json.JsonBuilder"/>
+        </constructor-arg>
+        <constructor-arg index="1" name="emergeRestClient">
+            <ref bean="emergeRestClient"/>
+        </constructor-arg>
+        <property name="cartDTOBuilder" ref="cartDTOBuilder"/>
+        <property name="cartDTOBuilderHelper" ref="cartDTOBuilderHelper"/>
+    </bean>
+
+    <bean id="emergeRestClient" class="com.lister.emerge.rest.EmergeRestClient" />
+
+    <bean id="customerDTOBuilder" class="com.lister.emerge.dto.helper.CustomerDTOBuilder" />
+    <bean id="cartDTOBuilder" class="com.lister.emerge.dto.helper.CartDTOBuilder" />
+
+    <bean id="customerDTOBuilderHelper" class="com.lister.emerge.dto.helper.CustomerDTOBuildHelper" />
+    <bean id="cartDTOBuilderHelper" class="com.lister.emerge.dto.helper.CartDTOBuilderHelper"/>
+
+    <bean id="jsonArray" class="org.json.JSONArray" scope="prototype"/>
+    <bean id="jsonObject" class="org.json.JSONObject" scope="prototype"/>
+
+</beans>

@@ -13,16 +13,16 @@
        http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
 	<!-- This will send notifications to eMerge project about the customer [Create 
 		Customer Profile, Edit profile, Make purchase, Search items...] -->
-	<context:annotation-config></context:annotation-config>
-	<context:component-scan base-package="com.lister.emerge"></context:component-scan>
-	
+	<!--<context:annotation-config></context:annotation-config>
+	<context:component-scan base-package="com.lister.emerge"></context:component-scan>-->
+	 <import resource="classpath:applicationContext-emerge.xml"/>
 	<aop:config>
-		<aop:aspect id="orderConfirmation" ref="orderConfirmationNotifier">
+		<!--<aop:aspect id="orderConfirmation" ref="orderConfirmationNotifier">
 			<aop:pointcut id="orderConfirmPointcut"
 				expression="execution(* org.broadleafcommerce.core.web.controller.checkout.BroadleafOrderConfirmationController.displayOrderConfirmationByOrderNumber(..))" />
 			<aop:after-returning method="logOrderSuccess"
 				pointcut-ref="orderConfirmPointcut" />
-		</aop:aspect>
+		</aop:aspect>-->
 		
 		<!-- <aop:aspect id="userRegistration" ref="customerEvent">
 			<aop:pointcut id="processRegisterPointCut"  
@@ -55,11 +55,11 @@
 		<!-- Cart related aspects -->
 		<aop:aspect id="addToCart" ref="cartEvent">
 			<aop:pointcut id="addToCartPointCut"  
-				expression="execution(* com.lister.controller.account.CartController.add*(..)) "/>
+				expression="execution(* com.lister.controller.cart.CartController.add*(..)) "/>
 			<aop:after-returning method="addToCart"  returning="returnValue"				
 				pointcut-ref="addToCartPointCut" />							
 		</aop:aspect>
-		<aop:aspect id="updateQuantity" ref="cartEvent">
+		<!--<aop:aspect id="updateQuantity" ref="cartEvent">
 			<aop:pointcut id="updateQuantityPointCut"  
 				expression="execution(* com.lister.controller.account.CartController.updateQuantity(..)) "/>
 			<aop:after-returning method="updateQuantity" returning="returnValue" 				
@@ -70,7 +70,7 @@
 				expression="execution(* com.lister.controller.account.CartController.remove(..)) "/>
 			<aop:after-returning method="remove"  returning="returnValue"				
 				pointcut-ref="removePointCut" />							
-		</aop:aspect>
+		</aop:aspect>-->
 		
 		<!-- 
 		<aop:aspect id="addCustomerAddress" ref="customerEvent">
@@ -95,18 +95,6 @@
 	</aop:config>
 	
 
-	<bean id="orderConfirmationNotifier" class="com.lister.emerge.events.OrderSuccessEvent"></bean>
-	<bean id="customerEvent" class="com.lister.emerge.events.CustomerEvent">
-        <constructor-arg index="0" name="jsonBuilder">
-            <bean class="com.lister.emerge.dto.json.JsonBuilder"/>
-        </constructor-arg>
-        <constructor-arg index="1" name="emergeRestClient">
-            <ref bean="emergeRestClient"/>
-        </constructor-arg>
-	</bean>
-    <bean id="emergeRestClient" class="com.lister.emerge.rest.EmergeRestClient" />
-	<bean id="customerDTOBuilder" class="com.lister.emerge.dto.helper.CustomerDTOBuilder" scope="prototype"></bean>
-	<bean id="customerDTOBuilderHelper" class="com.lister.emerge.dto.helper.CustomerDTOBuildHelper" scope="prototype"></bean>
-	<bean id="jsonArray" class="org.json.JSONArray" scope="prototype"></bean>
-	<bean id="jsonObject" class="org.json.JSONObject" scope="prototype"></bean>
+	<!--<bean id="orderConfirmationNotifier" class="com.lister.emerge.events.OrderSuccessEvent"></bean>-->
+
 </beans>       
