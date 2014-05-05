@@ -43,4 +43,42 @@ public class CartDTOBuilderHelper {
                 .withCreatedDate(DateFormatUtils.format(cart.getSubmitDate(), "yyyyMMdd")).build();
 
     }
+
+    /**
+     *
+     * @param cartItem
+     * @param request
+     * @param cartDTOBuilder
+     * @return  CartDTO
+     */
+    public CartDTO cartItemRemove(AddToCartItem cartItem, WebRequest request, CartDTOBuilder cartDTOBuilder){
+
+        Order cart = (Order) request.getAttribute("cart", WebRequest.SCOPE_REQUEST);
+        return cartDTOBuilder.withCartId(String.valueOf(cart.getId()))
+                .withEventValue(String.valueOf(cartItem.getProductId()))
+                .withEventId(105)
+                .withMemberId(((Customer)request.getAttribute("customer", WebRequest.SCOPE_REQUEST)).getId().intValue())
+                .withCreatedDate(DateFormatUtils.format(cart.getSubmitDate(), "yyyyMMdd")).build();
+
+    }
+
+    /**
+     *
+     *
+     * @param request
+     * @param cartDTOBuilder
+     * @return  CartDTO
+     */
+    public CartDTO cartCheckout(WebRequest request, CartDTOBuilder cartDTOBuilder){
+
+        Order cart = (Order) request.getAttribute("cart", WebRequest.SCOPE_REQUEST);
+        return cartDTOBuilder.withCartId(String.valueOf(cart.getId()))
+                .withEventValue(String.valueOf(cart.getId()))
+                .withEventId(107)
+                .withMemberId(((Customer)request.getAttribute("customer", WebRequest.SCOPE_REQUEST)).getId().intValue())
+                .withCreatedDate(DateFormatUtils.format(cart.getSubmitDate(), "yyyyMMdd")).build();
+
+    }
+
+
 }

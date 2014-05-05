@@ -19,6 +19,26 @@ public interface CartService extends Service{
             "User-Agent: Retrofit-Sample-App"
     })
 
-    String createCart(@retrofit.http.EncodedQuery(value="isResponseRequired") Boolean isResponseRequired,@EncodedQuery(value="storedProcedureName") String storedProcedureName, @retrofit.http.Body String bodyJson);
+    String cartItemAdd(@retrofit.http.EncodedQuery(value = "isResponseRequired") Boolean isResponseRequired, @EncodedQuery(value = "storedProcedureName") String storedProcedureName, @retrofit.http.Body String bodyJson);
+
+    @retrofit.http.POST("/cart")
+    @retrofit.http.Headers({
+            "Content-Type: application/json",
+            "Accept: application/json",
+            "Dummy: true",
+            "User-Agent: Retrofit-Sample-App"
+    })
+
+    String cartItemRemove(@retrofit.http.EncodedQuery(value="isResponseRequired") Boolean isResponseRequired,@EncodedQuery(value="storedProcedureName") String storedProcedureName, @retrofit.http.Body String bodyJson);
+
+    @retrofit.http.POST("/cart")
+    @retrofit.http.Headers({
+            "Content-Type: application/json",
+            "Accept: application/json",
+            "Dummy: true",
+            "User-Agent: Retrofit-Sample-App"
+    })
+
+    String cartCheckout(@retrofit.http.EncodedQuery(value="isResponseRequired") Boolean isResponseRequired,@EncodedQuery(value="storedProcedureName") String storedProcedureName, @retrofit.http.Body String bodyJson);
 
 }

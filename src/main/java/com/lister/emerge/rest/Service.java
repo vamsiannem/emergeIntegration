@@ -8,4 +8,10 @@ package com.lister.emerge.rest;
  * To change this template use File | Settings | File Templates.
  */
 public interface Service {
+
+    String PRC_CART_ITEM_ADD = "cartAbandonment";
+    String PRC_CART_ITEM_REMOVE = "cartAbandonment";
+    String PRC_CART_CHECKOUT = "cartAbandonment";
+    String PRC_CREATE_CUSTOMER = "em_members_update";
+
 }
