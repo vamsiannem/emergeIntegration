@@ -1,0 +1,81 @@
+Prerequisites
+========================================================================
+1)Maven
+2)java 6 or 7
+3)STS
+4)git(optional)
+5)MySql or postgres
+6)tomcat7
+7)putty(optional)
+8)winscp(optional)
+
+
+Pre Installation Steps:-
+========================================================================
+ Installing maven 
+
+   # Download maven
+   # Extract into any folder.
+   # Create 2 env variables M2 , M2_HOME
+
+
+	
+Setting up broadleaf on Tomcat :
+========================================================================
+
+1. Create 2 copies on tomcat( w2 different folders).
+
+2. Change tomcat ports in server.xml. 
+     # Site -  Miantain the same port(8080)
+     # Admin - Change port to a differnet port.( Eg.9080)
+
+3. the required tool are available in \\LT-PC-391\Setup.
+
+4. Inside STS, Import existing maven project and browse to the 'Demosite' folder.To import follow the steps in 
+http://docs.broadleafcommerce.org/core/current
+
+5. Add the maven path in the build.properties
+
+6. Follow MySql migration steps.open common-shared.properties file
+change the HSQL dialects to mysql dialects 
+blPU.hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+blSecurePU.hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+blCMSStorage.hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+
+
+7.Create a new database named "broadleaf" and a user capable of accessing this database with privileges for creating tables included (see MySQL documentation if you have questions about how to 	administrate databases and users).
+
+	Update your pom.xml files to reference MySQL connectors. In the root pom.xml, you want to place the following in the <dependencyManagement> section:
+
+	<dependency>
+    	<groupId>mysql</groupId>
+    	<artifactId>mysql-connector-java</artifactId>
+    	<version>5.1.26</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+	</dependency> 
+	and you'll want to place the following in the <dependencies> section of admin/pom.xml and site/pom.xml:
+
+	<dependency>
+    	<groupId>mysql</groupId>
+    	<artifactId>mysql-connector-java</artifactId>
+	</dependency> 
+
+9.Open context.xml in both site and admin folders.In the resourse tag 
+assign your mysql username,password credentails to corresponding attributes ,set the driver attribute to com.mysql.jdbc.Driver and set url attribute to jdbc:mysql://localhost:3306/broadleaf
+
+10.open appicationContext-secutriy-admin.xml and alter http ports to refelect tomcat settings(admin's and site's).
+
+11.In appicationContext-secutriy.xml diable https-security options(comment tags which enable https)
+
+12.Add two tomcat servers to STS
+
+13.Alter the following Tomcat server settings from STS 
+	a.increase timeout to 10000
+	b.choose option to use tomcat installtion(2nd options)
+	c.disable autoreload of modules
+	d.change the path of the application to site(disable auto relod in this page)
+
+14. Add "site", "Admin" to their designated tomcat servers.
+15. Start The Servers.
+
